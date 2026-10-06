@@ -1,17 +1,27 @@
-# kuispilgan_pm2
+# Kuis Ilkom
 
-A new Flutter project.
+## Identitas Mahasiswa
+- Nama: (isi)
+- NIM: (isi)
+- Lab: (isi, mis. PM 2)
 
-## Getting Started
+## Informasi Aplikasi
+- **Nama Aplikasi:** Kuis Ilkom
+- **Deskripsi:** Aplikasi kuis pilihan ganda seputar ilmu komputer dengan fitur akun (register dan login).
+- **Fitur:**
+  - Register dan login (data lokal), sesi login tersimpan
+  - 15 soal dalam 3 kategori: Dasar Komputer, Pemrograman, Jaringan & Basis Data
+  - Soal diacak, progress bar, tombol kembali/lanjut
+  - Skor akhir dan pembahasan lengkap dengan penjelasan jawaban
+  - Riwayat skor dan skor terbaik per akun
+  - Lanjutkan kuis yang belum selesai (progres aman saat rotasi layar)
+  - Dark/light mode
+  - Adaptive layout untuk tablet dan web
 
-This project is a starting point for a Flutter application.
+## Teknologi
+Flutter, Provider (state management), shared_preferences (penyimpanan lokal)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Dokumentasi
+- Credit aset: font Poppins (Google Fonts, SIL OFL); ikon Material Icons; banner (isi sumber)
+- Screenshot: (Login, Register, Home, Quiz, Result)
+- Mockup/Prototype: (link Figma)
