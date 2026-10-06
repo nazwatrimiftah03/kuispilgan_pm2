@@ -1,12 +1,12 @@
 # Kuis Ilkom
 
 ## Identitas Mahasiswa
-- Nama: (isi)
-- NIM: (isi)
-- Lab: (isi, mis. PM 2)
+- Nama: Nazwa Tri Mifthah
+- NIM: 241401106
+- Lab: Pemrograman Mobile 2
 
 ## Informasi Aplikasi
-- **Nama Aplikasi:** Kuis Ilkom
+- **Nama Aplikasi:** Kuis Pilihan Berganda
 - **Deskripsi:** Aplikasi kuis pilihan ganda seputar ilmu komputer dengan fitur akun (register dan login).
 - **Fitur:**
   - Register dan login (data lokal), sesi login tersimpan
