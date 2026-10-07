@@ -10,7 +10,6 @@
 - **Deskripsi:** Aplikasi kuis pilihan ganda seputar ilmu komputer dengan fitur akun (register dan login).
 - **Fitur:**
   - Register dan login (data lokal), sesi login tersimpan
-  - 15 soal dalam 3 kategori: Dasar Komputer, Pemrograman, Jaringan & Basis Data
   - Soal diacak, progress bar, tombol kembali/lanjut
   - Skor akhir dan pembahasan lengkap dengan penjelasan jawaban
   - Riwayat skor dan skor terbaik per akun
