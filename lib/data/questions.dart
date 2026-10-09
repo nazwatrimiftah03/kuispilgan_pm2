@@ -3,11 +3,13 @@ import 'package:kuispilgan_pm2/data/courses.dart';
 import '../models/question.dart';
 import 'courses.dart';
 import 'questions_dasar.dart';
+import 'questions_lanjut.dart';
 import 'questions_menengah.dart';
 
 final List<Question> allQuestions = [
   ...questionsDasar,
   ...questionsMenengah,
+  ...questionsLanjut,
 ];
 
 final List<String> categoryNames = courses.map((c) => c.name).toList();

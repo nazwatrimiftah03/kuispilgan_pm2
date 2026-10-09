@@ -32,6 +32,13 @@ class QuizProvider extends ChangeNotifier {
   List<ScoreEntry> historyOf(String username) =>
       history.where((h) => h.username == username).toList();
 
+  /// Persentase nilai terbaik pengguna pada satu mata kuliah (null jika belum pernah).
+  double? bestPercentFor(String username, String category) {
+    final list = history.where((h) => h.username == username && h.category == category);
+    if (list.isEmpty) return null;
+    return list.map((h) => h.percent).reduce((a, b) => a > b ? a : b);
+  }
+
   void start(String? category) {
     _category = category ?? 'Semua Kategori';
     _questions = questionsFor(category);

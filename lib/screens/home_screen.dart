@@ -1,28 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../data/courses.dart';
 import '../data/questions.dart';
+import '../models/course.dart';
 import '../providers/auth_provider.dart';
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
+import '../utils/gamification.dart';
 import '../utils/responsive.dart';
 import '../widgets/category_card.dart';
 import '../widgets/content_wrapper.dart';
+import '../widgets/course_card.dart';
+import '../widgets/level_card.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/theme_toggle_button.dart';
 import 'quiz_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static const Map<String, IconData> _icons = {
-    'Dasar Komputer': Icons.computer,
-    'Pemrograman': Icons.code,
-    'Jaringan & Basis Data': Icons.storage,
-  };
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-  void _open(BuildContext context, String? category) {
+class _HomeScreenState extends State<HomeScreen> {
+  static const List<String> _levels = ['Semua', 'Semester 1-2', 'Semester 3-4', 'Semester 5-6'];
+
+  final _search = TextEditingController();
+  String _query = '';
+  String _level = 'Semua';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  void _open(String? category) {
     context.read<QuizProvider>().start(category);
     Navigator.push(context, MaterialPageRoute(builder: (_) => const QuizScreen()));
+  }
+
+  int _count(String courseName) =>
+      allQuestions.where((q) => q.category == courseName).length;
+
+  List<Course> get _filtered {
+    final q = _query.trim().toLowerCase();
+    return courses.where((c) {
+      final matchQuery = q.isEmpty ||
+          c.name.toLowerCase().contains(q) ||
+          c.description.toLowerCase().contains(q);
+      final matchLevel = _level == 'Semua' || c.level == _level;
+      return matchQuery && matchLevel;
+    }).toList();
   }
 
   @override
@@ -33,9 +63,11 @@ class HomeScreen extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     final history = quiz.historyOf(user.username);
-    final best = history.isEmpty
+    final level = Gamification.levelFor(Gamification.totalXp(history));
+    final average = history.isEmpty
         ? null
-        : history.reduce((a, b) => a.percent >= b.percent ? a : b);
+        : history.map((h) => h.percent).reduce((a, b) => a + b) / history.length;
+    final filtered = _filtered;
 
     return Scaffold(
       appBar: AppBar(
@@ -56,49 +88,13 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Kartu sapaan
-            Container(
-              padding: EdgeInsets.all(r.wp(5)),
-              decoration: BoxDecoration(
-                gradient: AppColors.heroGradient,
-                borderRadius: BorderRadius.circular(r.wp(5)),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: r.wp(8),
-                    backgroundColor: AppColors.gold,
-                    child: Text(
-                      user.fullName[0].toUpperCase(),
-                      style: TextStyle(fontSize: r.sp(6), fontWeight: FontWeight.w700, color: Colors.black87),
-                    ),
-                  ),
-                  SizedBox(width: r.wp(4)),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Halo, ${user.fullName}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w700, color: Colors.white),
-                        ),
-                        SizedBox(height: r.wp(1)),
-                        Text(
-                          best == null
-                              ? 'Belum ada skor. Yuk mulai kuis!'
-                              : 'Skor terbaik: ${best.score}/${best.total} (${best.category})',
-                          style: TextStyle(fontSize: r.sp(3.1), color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            LevelCard(
+              name: user.fullName,
+              level: level,
+              quizCount: history.length,
+              averagePercent: average,
             ),
 
-            // Lanjutkan kuis yang belum selesai
             if (quiz.hasProgress) ...[
               SizedBox(height: r.wp(4)),
               PrimaryButton(
@@ -111,41 +107,108 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
 
-            SizedBox(height: r.wp(6)),
-            Text('Pilih Kategori', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
-            SizedBox(height: r.wp(3)),
+            SizedBox(height: r.wp(5)),
             CategoryCard(
-              icon: Icons.apps,
-              title: 'Semua Kategori',
-              subtitle: '${allQuestions.length} soal acak',
-              onTap: () => _open(context, null),
+              icon: Icons.shuffle,
+              title: 'Acak Semua Mata Kuliah',
+              subtitle: '${allQuestions.length} soal dari ${courses.length} mata kuliah',
+              onTap: () => _open(null),
             ),
-            for (final c in categoryNames)
-              CategoryCard(
-                icon: _icons[c] ?? Icons.quiz,
-                title: c,
-                subtitle: '${allQuestions.where((q) => q.category == c).length} soal',
-                onTap: () => _open(context, c),
+
+            SizedBox(height: r.wp(2)),
+            Text('Mata Kuliah', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
+            SizedBox(height: r.wp(3)),
+
+            // Pencarian
+            TextField(
+              controller: _search,
+              onChanged: (v) => setState(() => _query = v),
+              style: TextStyle(fontSize: r.sp(3.6)),
+              decoration: InputDecoration(
+                hintText: 'Cari mata kuliah...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _query.isEmpty
+                    ? null
+                    : IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _search.clear();
+                    setState(() => _query = '');
+                  },
+                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(r.wp(4))),
+              ),
+            ),
+            SizedBox(height: r.wp(3)),
+
+            // Filter semester
+            Wrap(
+              spacing: r.wp(2),
+              runSpacing: r.wp(1),
+              children: [
+                for (final l in _levels)
+                  ChoiceChip(
+                    label: Text(l, style: TextStyle(fontSize: r.sp(3))),
+                    selected: _level == l,
+                    onSelected: (_) => setState(() => _level = l),
+                  ),
+              ],
+            ),
+            SizedBox(height: r.wp(4)),
+
+            // Grid mata kuliah (Wrap agar tinggi mengikuti isi, tanpa overflow)
+            if (filtered.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: r.wp(8)),
+                child: Column(
+                  children: [
+                    Icon(Icons.search_off, size: r.wp(14), color: cs.onSurfaceVariant),
+                    SizedBox(height: r.wp(2)),
+                    Text(
+                      'Mata kuliah tidak ditemukan',
+                      style: TextStyle(fontSize: r.sp(3.6), color: cs.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              )
+            else
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final gap = r.wp(3);
+                  final cardWidth = ((constraints.maxWidth - gap) / 2).floorToDouble();
+                  return Wrap(
+                    spacing: gap,
+                    runSpacing: gap,
+                    children: [
+                      for (final c in filtered)
+                        SizedBox(
+                          width: cardWidth,
+                          child: CourseCard(
+                            course: c,
+                            questionCount: _count(c.name),
+                            bestPercent: quiz.bestPercentFor(user.username, c.name),
+                            onTap: () => _open(c.name),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
 
-            // Riwayat skor
             if (history.isNotEmpty) ...[
-              SizedBox(height: r.wp(3)),
-              Text('Riwayat Skor', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
+              SizedBox(height: r.wp(6)),
+              Text('Riwayat Terbaru', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
               SizedBox(height: r.wp(2)),
-              for (final h in history)
+              for (final h in history.take(5))
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.emoji_events, color: AppColors.gold),
-                    title: Text(h.category, style: TextStyle(fontSize: r.sp(3.5))),
+                    title: Text(h.category, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: r.sp(3.5))),
                     subtitle: Text(
-                      '${h.date.day}/${h.date.month}/${h.date.year}',
+                      '${h.date.day}/${h.date.month}/${h.date.year}  |  +${Gamification.xpOf(h)} XP',
                       style: TextStyle(fontSize: r.sp(3), color: cs.onSurfaceVariant),
                     ),
-                    trailing: Text(
-                      '${h.score}/${h.total}',
-                      style: TextStyle(fontSize: r.sp(4), fontWeight: FontWeight.w700),
-                    ),
+                    trailing: Text('${h.score}/${h.total}', style: TextStyle(fontSize: r.sp(4), fontWeight: FontWeight.w700)),
                   ),
                 ),
             ],
