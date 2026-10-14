@@ -7,12 +7,52 @@ import '../widgets/content_wrapper.dart';
 import '../widgets/option_tile.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/progress_header.dart';
+import '../widgets/timer_badge.dart';
 import 'result_screen.dart';
 
-class QuizScreen extends StatelessWidget {
+class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
 
+  @override
+  State<QuizScreen> createState() => _QuizScreenState();
+}
+
+class _QuizScreenState extends State<QuizScreen> {
   static const List<String> _labels = ['A', 'B', 'C', 'D', 'E'];
+
+  late final QuizProvider _quiz;
+  bool _navigating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _quiz = context.read<QuizProvider>();
+    _quiz.addListener(_onQuizChanged);
+    _quiz.resumeTimer(); // lanjutkan timer jika pengguna kembali ke kuis
+  }
+
+  @override
+  void dispose() {
+    _quiz.removeListener(_onQuizChanged);
+    _quiz.pauseTimer(); // jeda timer jika pengguna keluar dari layar kuis
+    super.dispose();
+  }
+
+  /// Waktu soal terakhir habis -> selesaikan kuis otomatis.
+  void _onQuizChanged() {
+    if (_navigating || !_quiz.expired) return;
+    _navigating = true;
+    Future.microtask(_finish);
+  }
+
+  void _finish() {
+    if (!mounted) return;
+    _quiz.finish(context.read<AuthProvider>().user!.username);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const ResultScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +71,18 @@ class QuizScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ProgressHeader(current: quiz.current, total: quiz.total),
+            Row(
+              children: [
+                Expanded(child: ProgressHeader(current: quiz.current, total: quiz.total)),
+                if (quiz.timerEnabled) ...[
+                  SizedBox(width: r.wp(4)),
+                  TimerBadge(
+                    secondsLeft: quiz.secondsLeft,
+                    totalSeconds: quiz.settings.secondsPerQuestion,
+                  ),
+                ],
+              ],
+            ),
             SizedBox(height: r.wp(5)),
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(r.wp(4))),
@@ -54,7 +105,7 @@ class QuizScreen extends StatelessWidget {
             SizedBox(height: r.wp(2)),
             Row(
               children: [
-                if (quiz.current > 0) ...[
+                if (quiz.canGoBack) ...[
                   Expanded(
                     child: PrimaryButton(
                       label: 'Kembali',
@@ -71,18 +122,7 @@ class QuizScreen extends StatelessWidget {
                     icon: quiz.isLast ? Icons.flag : Icons.arrow_forward,
                     onPressed: quiz.selected == null
                         ? null
-                        : () {
-                      if (quiz.isLast) {
-                        final username = context.read<AuthProvider>().user!.username;
-                        quiz.finish(username);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ResultScreen()),
-                        );
-                      } else {
-                        quiz.next();
-                      }
-                    },
+                        : () => quiz.isLast ? _finish() : quiz.next(),
                   ),
                 ),
               ],

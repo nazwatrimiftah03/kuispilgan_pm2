@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/courses.dart';
+import '../widgets/quiz_settings_sheet.dart';
 import '../data/questions.dart';
 import '../models/course.dart';
 import '../providers/auth_provider.dart';
@@ -36,8 +37,15 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _open(String? category) {
-    context.read<QuizProvider>().start(category);
+  Future<void> _open(String? category) async {
+    final available = category == null ? allQuestions.length : _count(category);
+    final settings = await showQuizSettingsSheet(
+      context,
+      title: category ?? 'Acak Semua Mata Kuliah',
+      available: available,
+    );
+    if (settings == null || !mounted) return;
+    context.read<QuizProvider>().start(category, settings: settings);
     Navigator.push(context, MaterialPageRoute(builder: (_) => const QuizScreen()));
   }
 
