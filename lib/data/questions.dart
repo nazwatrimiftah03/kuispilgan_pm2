@@ -1,4 +1,3 @@
-import 'package:kuispilgan_pm2/data/courses.dart';
 
 import '../models/question.dart';
 import 'courses.dart';
@@ -18,9 +17,12 @@ List<Question> questionsFor(String? category, {int? limit}) {
   final list = category == null
       ? List<Question>.of(allQuestions)
       : allQuestions.where((q) => q.category == category).toList();
+
   list.shuffle();
+
   if (limit != null && limit < list.length) {
     return list.take(limit).toList();
   }
+
   return list;
 }

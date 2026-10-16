@@ -9,6 +9,7 @@ import '../widgets/primary_button.dart';
 import '../widgets/progress_header.dart';
 import '../widgets/timer_badge.dart';
 import 'result_screen.dart';
+import '../widgets/feedback_card.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -52,6 +53,16 @@ class _QuizScreenState extends State<QuizScreen> {
       context,
       MaterialPageRoute(builder: (_) => const ResultScreen()),
     );
+  }
+
+  OptionStatus _statusOf(QuizProvider quiz, int i) {
+    final answer = quiz.questions[quiz.current].answerIndex;
+    if (!quiz.isLocked) {
+      return quiz.selected == i ? OptionStatus.selected : OptionStatus.normal;
+    }
+    if (i == answer) return OptionStatus.correct;
+    if (i == quiz.selected) return OptionStatus.wrong;
+    return OptionStatus.dimmed;
   }
 
   @override
@@ -99,8 +110,13 @@ class _QuizScreenState extends State<QuizScreen> {
               OptionTile(
                 label: _labels[i],
                 text: q.options[i],
-                selected: quiz.selected == i,
-                onTap: () => context.read<QuizProvider>().select(i),
+                status: _statusOf(quiz, i),
+                onTap: quiz.isLocked ? null : () => context.read<QuizProvider>().select(i),
+              ),
+            if (quiz.isLocked)
+              FeedbackCard(
+                correct: quiz.selected == q.answerIndex,
+                explanation: q.explanation,
               ),
             SizedBox(height: r.wp(2)),
             Row(

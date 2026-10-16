@@ -36,6 +36,8 @@ class _QuizSettingsSheetState extends State<QuizSettingsSheet> {
   bool _timer = false;
   int _seconds = 30;
 
+  QuizMode _mode = QuizMode.ujian;
+
   @override
   Widget build(BuildContext context) {
     final r = Responsive(context);
@@ -81,6 +83,28 @@ class _QuizSettingsSheetState extends State<QuizSettingsSheet> {
               ),
               SizedBox(height: r.wp(4)),
 
+              Text('Mode', style: TextStyle(fontSize: r.sp(3.8), fontWeight: FontWeight.w600)),
+              SizedBox(height: r.wp(2)),
+              SegmentedButton<QuizMode>(
+                style: ButtonStyle(
+                  textStyle: WidgetStatePropertyAll(TextStyle(fontSize: r.sp(3.4))),
+                ),
+                segments: const [
+                  ButtonSegment(value: QuizMode.latihan, label: Text('Latihan'), icon: Icon(Icons.school)),
+                  ButtonSegment(value: QuizMode.ujian, label: Text('Ujian'), icon: Icon(Icons.assignment)),
+                ],
+                selected: {_mode},
+                onSelectionChanged: (s) => setState(() => _mode = s.first),
+              ),
+              SizedBox(height: r.wp(1.5)),
+              Text(
+                _mode == QuizMode.latihan
+                    ? 'Jawaban langsung dikoreksi beserta penjelasannya.'
+                    : 'Jawaban baru dikoreksi setelah semua soal selesai.',
+                style: TextStyle(fontSize: r.sp(3), color: cs.onSurfaceVariant),
+              ),
+              SizedBox(height: r.wp(4)),
+
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text('Timer per soal', style: TextStyle(fontSize: r.sp(3.8), fontWeight: FontWeight.w600)),
@@ -112,6 +136,7 @@ class _QuizSettingsSheetState extends State<QuizSettingsSheet> {
                   context,
                   QuizSettings(
                     questionCount: _count,
+                    mode: _mode, // <-- Ditambahkan di sini
                     timerEnabled: _timer,
                     secondsPerQuestion: _seconds,
                   ),

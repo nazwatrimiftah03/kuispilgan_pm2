@@ -6,7 +6,6 @@ class Responsive {
 
   final double screenWidth;
   final double screenHeight;
-
   final double width;
 
   Responsive(BuildContext context)
@@ -17,9 +16,19 @@ class Responsive {
   bool get isTablet => screenWidth >= tabletBreakpoint;
   bool get isLandscape => screenWidth > screenHeight;
 
-  double wp(double percent) => width * percent / 100;
+  double wp(double percent) {
+    final val = width * percent / 100;
+    return val > 0 ? val : 1.0;
+  }
 
-  double hp(double percent) => screenHeight * percent / 100;
+  double hp(double percent) {
+    final val = screenHeight * percent / 100;
+    return val > 0 ? val : 1.0;
+  }
 
-  double sp(double percent) => width * percent / 100;
+  double sp(double percent) {
+    final val = width * percent / 100;
+    // Berikan fallback minimal ukuran teks agar tidak pernah 0 atau negatif
+    return val > 0 ? val : 12.0;
+  }
 }

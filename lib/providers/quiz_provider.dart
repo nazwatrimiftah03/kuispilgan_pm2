@@ -40,6 +40,11 @@ class QuizProvider extends ChangeNotifier {
   /// Pada mode timer, tombol kembali dinonaktifkan agar adil.
   bool get canGoBack => _current > 0 && !timerEnabled;
 
+  bool get isPractice => _settings.mode == QuizMode.latihan;
+
+  /// Pada mode latihan, jawaban dikunci setelah dipilih agar koreksi tidak bisa dicurangi.
+  bool get isLocked => isPractice && _answers.isNotEmpty && _answers[_current] != null;
+
   int get score {
     int s = 0;
     for (int i = 0; i < total; i++) {
@@ -72,7 +77,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void select(int index) {
-    if (_expired) return;
+    if (_expired || isLocked) return;
     _answers[_current] = index;
     notifyListeners();
   }
@@ -105,6 +110,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void _tick() {
+    if (isLocked) return;
     if (_secondsLeft > 0) _secondsLeft--;
     if (_secondsLeft == 0) {
       if (isLast) {
