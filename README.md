@@ -21,6 +21,6 @@
 Flutter, Provider (state management), shared_preferences (penyimpanan lokal)
 
 ## Dokumentasi
-- Credit aset: font Poppins (Google Fonts, SIL OFL); ikon Material Icons; banner (isi sumber)
+- Credit aset: font Poppins (Google Fonts, SIL OFL); ikon Material Icons; banner (Google)
 - Screenshot: (Login, Register, Home, Quiz, Result)
-- Mockup/Prototype: (link Figma)
+- Mockup/Prototype: 
