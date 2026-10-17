@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/courses.dart';
-import '../widgets/quiz_settings_sheet.dart';
 import '../data/questions.dart';
 import '../models/course.dart';
 import '../providers/auth_provider.dart';
@@ -14,8 +13,11 @@ import '../widgets/content_wrapper.dart';
 import '../widgets/course_card.dart';
 import '../widgets/level_card.dart';
 import '../widgets/primary_button.dart';
+import '../widgets/quiz_settings_sheet.dart';
 import '../widgets/theme_toggle_button.dart';
+import 'profile_screen.dart';
 import 'quiz_screen.dart';
+import 'stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,7 +68,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final r = Responsive(context);
-    final user = context.watch<AuthProvider>().user!;
+    final user = context.watch<AuthProvider>().user;
+    if (user == null) return const SizedBox.shrink(); // saat transisi keluar akun
+
     final quiz = context.watch<QuizProvider>();
     final cs = Theme.of(context).colorScheme;
 
@@ -81,6 +85,22 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Kuis Ilkom'),
         actions: [
+          IconButton(
+            tooltip: 'Profil',
+            icon: const Icon(Icons.account_circle),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Statistik',
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const StatsScreen()),
+            ),
+          ),
           const ThemeToggleButton(),
           IconButton(
             tooltip: 'Keluar',
@@ -98,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             LevelCard(
               name: user.fullName,
+              avatarIndex: user.avatarIndex,
               level: level,
               quizCount: history.length,
               averagePercent: average,
@@ -203,6 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
+            // Riwayat 5 terakhir
             if (history.isNotEmpty) ...[
               SizedBox(height: r.wp(6)),
               Text('Riwayat Terbaru', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
@@ -211,12 +233,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.emoji_events, color: AppColors.gold),
-                    title: Text(h.category, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: r.sp(3.5))),
+                    title: Text(
+                      h.category,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: r.sp(3.5)),
+                    ),
                     subtitle: Text(
                       '${h.date.day}/${h.date.month}/${h.date.year}  |  +${Gamification.xpOf(h)} XP',
                       style: TextStyle(fontSize: r.sp(3), color: cs.onSurfaceVariant),
                     ),
-                    trailing: Text('${h.score}/${h.total}', style: TextStyle(fontSize: r.sp(4), fontWeight: FontWeight.w700)),
+                    trailing: Text(
+                      '${h.score}/${h.total}',
+                      style: TextStyle(fontSize: r.sp(4), fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
             ],

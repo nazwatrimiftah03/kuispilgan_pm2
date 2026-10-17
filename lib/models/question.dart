@@ -30,4 +30,19 @@ class ScoreEntry {
   });
 
   double get percent => total == 0 ? 0 : score / total;
+  Map<String, dynamic> toJson() => {
+    'u': username,
+    'c': category,
+    's': score,
+    't': total,
+    'd': date.toIso8601String(),
+  };
+
+  factory ScoreEntry.fromJson(Map<String, dynamic> j) => ScoreEntry(
+    username: j['u'] as String,
+    category: j['c'] as String,
+    score: j['s'] as int,
+    total: j['t'] as int,
+    date: DateTime.parse(j['d'] as String),
+  );
 }

@@ -5,9 +5,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppUser {
   final String fullName;
   final String username;
-  const AppUser(this.fullName, this.username);
+  final int avatarIndex;
+  final DateTime joinedAt;
+
+  const AppUser({
+    required this.fullName,
+    required this.username,
+    required this.avatarIndex,
+    required this.joinedAt,
+  });
 }
 
+/// Autentikasi dummy & lokal (SharedPreferences, bukan database).
+/// Catatan: password disimpan polos hanya untuk latihan.
 class AuthProvider extends ChangeNotifier {
   static const _usersKey = 'users';
   static const _sessionKey = 'session';
@@ -18,8 +28,23 @@ class AuthProvider extends ChangeNotifier {
   AppUser? get user => _current;
   bool get isLoggedIn => _current != null;
 
-  AppUser _toUser(String username) =>
-      AppUser(_users[username]!['name']!, username);
+  /// Semua akun di perangkat ini (dipakai papan peringkat).
+  List<AppUser> get allUsers => _users.keys.map(_toUser).toList();
+
+  AppUser _toUser(String username) {
+    final d = _users[username]!;
+    return AppUser(
+      fullName: d['name']!,
+      username: username,
+      avatarIndex: int.tryParse(d['avatar'] ?? '') ?? 0,
+      joinedAt: DateTime.tryParse(d['joined'] ?? '') ?? DateTime.now(),
+    );
+  }
+
+  Future<void> _saveUsers() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_usersKey, jsonEncode(_users));
+  }
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -30,6 +55,17 @@ class AuthProvider extends ChangeNotifier {
             (k, v) => MapEntry(k, Map<String, String>.from(v as Map)),
       );
     }
+
+    // Akun lama belum punya tanggal bergabung: isi sekali lalu simpan.
+    var dirty = false;
+    for (final d in _users.values) {
+      if (d['joined'] == null) {
+        d['joined'] = DateTime.now().toIso8601String();
+        dirty = true;
+      }
+    }
+    if (dirty) await _saveUsers();
+
     final session = prefs.getString(_sessionKey);
     if (session != null && _users.containsKey(session)) {
       _current = _toUser(session);
@@ -40,9 +76,14 @@ class AuthProvider extends ChangeNotifier {
     final key = username.trim().toLowerCase();
     if (_users.containsKey(key)) return 'Username sudah dipakai';
 
-    _users[key] = {'name': fullName.trim(), 'password': password};
+    _users[key] = {
+      'name': fullName.trim(),
+      'password': password,
+      'avatar': '0',
+      'joined': DateTime.now().toIso8601String(),
+    };
+    await _saveUsers();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_usersKey, jsonEncode(_users));
     await prefs.setString(_sessionKey, key);
 
     _current = _toUser(key);
@@ -69,5 +110,35 @@ class AuthProvider extends ChangeNotifier {
     await prefs.remove(_sessionKey);
     _current = null;
     notifyListeners();
+  }
+
+  // ---------- Profil ----------
+
+  Future<void> updateName(String name) async {
+    final u = _current;
+    if (u == null) return;
+    _users[u.username]!['name'] = name.trim();
+    await _saveUsers();
+    _current = _toUser(u.username);
+    notifyListeners();
+  }
+
+  Future<void> updateAvatar(int index) async {
+    final u = _current;
+    if (u == null) return;
+    _users[u.username]!['avatar'] = index.toString();
+    await _saveUsers();
+    _current = _toUser(u.username);
+    notifyListeners();
+  }
+
+  /// Mengembalikan pesan error, atau null jika berhasil.
+  Future<String?> changePassword(String oldPass, String newPass) async {
+    final u = _current;
+    if (u == null) return 'Kamu belum masuk';
+    if (_users[u.username]!['password'] != oldPass) return 'Password lama salah';
+    _users[u.username]!['password'] = newPass;
+    await _saveUsers();
+    return null;
   }
 }

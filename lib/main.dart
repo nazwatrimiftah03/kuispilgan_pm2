@@ -10,12 +10,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final auth = AuthProvider();
   await auth.load();
+  final quiz = QuizProvider();
+  await quiz.load();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: auth),
-        ChangeNotifierProvider(create: (_) => QuizProvider()),
+        ChangeNotifierProvider.value(value: quiz),
       ],
       child: const QuizApp(),
     ),

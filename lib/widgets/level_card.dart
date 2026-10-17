@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/gamification.dart';
 import '../utils/responsive.dart';
+import 'user_avatar.dart';
 
 class LevelCard extends StatelessWidget {
   final String name;
   final PlayerLevel level;
   final int quizCount;
   final double? averagePercent;
+  final int avatarIndex;
 
   const LevelCard({
     super.key,
@@ -15,6 +17,7 @@ class LevelCard extends StatelessWidget {
     required this.level,
     required this.quizCount,
     required this.averagePercent,
+    this.avatarIndex = 0,
   });
 
   @override
@@ -33,13 +36,10 @@ class LevelCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: r.wp(7),
-                backgroundColor: AppColors.gold,
-                child: Text(
-                  name[0].toUpperCase(),
-                  style: TextStyle(fontSize: r.sp(5.5), fontWeight: FontWeight.w700, color: Colors.black87),
-                ),
+              Container(
+                padding: EdgeInsets.all(r.wp(0.8)),
+                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: UserAvatar(index: avatarIndex, radius: r.wp(6.5)),
               ),
               SizedBox(width: r.wp(4)),
               Expanded(
@@ -68,7 +68,7 @@ class LevelCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(r.wp(2)),
             child: LinearProgressIndicator(
               value: level.progress,
-              minHeight: r.wp(2) > 0 ? r.wp(2) : 6.0,
+              minHeight: r.wp(2.5),
               backgroundColor: Colors.white24,
               valueColor: const AlwaysStoppedAnimation(AppColors.gold),
             ),

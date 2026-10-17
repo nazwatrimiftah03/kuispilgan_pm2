@@ -1,17 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/questions.dart';
 import '../models/question.dart';
 import '../models/quiz_settings.dart';
 
 /// State management (Provider). Dipasang di root aplikasi sehingga progres
 /// jawaban dan timer tidak hilang saat layar dirotasi atau pindah halaman.
+/// Riwayat skor dan tema disimpan lokal dengan shared_preferences.
 class QuizProvider extends ChangeNotifier {
+  static const _historyKey = 'history';
+  static const _themeKey = 'theme_dark';
+
   String _category = 'Semua Kategori';
   List<Question> _questions = [];
   List<int?> _answers = [];
   int _current = 0;
   bool _finished = false;
+  bool _isRetry = false;
 
   QuizSettings _settings = const QuizSettings();
   Timer? _timer;
@@ -30,11 +37,12 @@ class QuizProvider extends ChangeNotifier {
   bool get hasProgress => _questions.isNotEmpty && !_finished;
   int? get selected => _answers[_current];
 
+  /// true jika sesi ini adalah "ulangi soal yang salah" (tidak dicatat ke riwayat).
+  bool get isRetry => _isRetry;
+
   QuizSettings get settings => _settings;
   bool get timerEnabled => _settings.timerEnabled;
   int get secondsLeft => _secondsLeft;
-
-  /// true saat waktu soal terakhir habis; layar kuis lalu menyelesaikan kuis.
   bool get expired => _expired;
 
   /// Pada mode timer, tombol kembali dinonaktifkan agar adil.
@@ -62,6 +70,37 @@ class QuizProvider extends ChangeNotifier {
     return list.map((h) => h.percent).reduce((a, b) => a > b ? a : b);
   }
 
+  // ---------- Penyimpanan lokal ----------
+
+  /// Dipanggil sekali di main() untuk memuat riwayat dan tema tersimpan.
+  Future<void> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    themeMode = (prefs.getBool(_themeKey) ?? false) ? ThemeMode.dark : ThemeMode.light;
+    final raw = prefs.getString(_historyKey);
+    history.clear();
+    if (raw != null) {
+      try {
+        final list = jsonDecode(raw) as List<dynamic>;
+        history.addAll(list.map((e) => ScoreEntry.fromJson(e as Map<String, dynamic>)));
+      } catch (_) {
+        history.clear(); // data rusak: mulai dari nol
+      }
+    }
+  }
+
+  Future<void> _saveHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_historyKey, jsonEncode(history.map((e) => e.toJson()).toList()));
+  }
+
+  void clearHistory(String username) {
+    history.removeWhere((h) => h.username == username);
+    _saveHistory();
+    notifyListeners();
+  }
+
+  // ---------- Alur kuis ----------
+
   void start(String? category, {QuizSettings settings = const QuizSettings()}) {
     pauseTimer();
     _settings = settings;
@@ -70,8 +109,29 @@ class QuizProvider extends ChangeNotifier {
     _answers = List<int?>.filled(_questions.length, null);
     _current = 0;
     _finished = false;
+    _isRetry = false;
     _expired = false;
     _secondsLeft = settings.secondsPerQuestion;
+    resumeTimer();
+    notifyListeners();
+  }
+
+  /// Memulai sesi baru yang hanya berisi soal yang dijawab salah atau terlewat.
+  void retryWrong() {
+    final wrong = <Question>[];
+    for (int i = 0; i < total; i++) {
+      if (_answers[i] != _questions[i].answerIndex) wrong.add(_questions[i]);
+    }
+    if (wrong.isEmpty) return;
+    pauseTimer();
+    wrong.shuffle();
+    _questions = wrong;
+    _answers = List<int?>.filled(wrong.length, null);
+    _current = 0;
+    _finished = false;
+    _isRetry = true;
+    _expired = false;
+    _secondsLeft = _settings.secondsPerQuestion;
     resumeTimer();
     notifyListeners();
   }
@@ -110,7 +170,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void _tick() {
-    if (isLocked) return;
+    if (isLocked) return; // timer berhenti saat pembahasan ditampilkan
     if (_secondsLeft > 0) _secondsLeft--;
     if (_secondsLeft == 0) {
       if (isLast) {
@@ -129,16 +189,19 @@ class QuizProvider extends ChangeNotifier {
   void finish(String username) {
     pauseTimer();
     _finished = true;
-    history.insert(
-      0,
-      ScoreEntry(
-        username: username,
-        category: _category,
-        score: score,
-        total: total,
-        date: DateTime.now(),
-      ),
-    );
+    if (!_isRetry) {
+      history.insert(
+        0,
+        ScoreEntry(
+          username: username,
+          category: _category,
+          score: score,
+          total: total,
+          date: DateTime.now(),
+        ),
+      );
+      _saveHistory();
+    }
     notifyListeners();
   }
 
@@ -148,13 +211,16 @@ class QuizProvider extends ChangeNotifier {
     _answers = [];
     _current = 0;
     _finished = false;
+    _isRetry = false;
     _expired = false;
     notifyListeners();
   }
 
-  void toggleTheme() {
+  Future<void> toggleTheme() async {
     themeMode = themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_themeKey, themeMode == ThemeMode.dark);
   }
 
   @override
