@@ -16,6 +16,12 @@ class CourseName {
   static const ai = 'Kecerdasan Buatan';
   static const keamanan = 'Keamanan Informasi';
   static const mobile = 'Pemrograman Mobile';
+  static const web = 'Pemrograman Web';
+  static const daa = 'Desain & Analisis Algoritma';
+  static const imk = 'Interaksi Manusia & Komputer';
+  static const otomata = 'Teori Bahasa & Otomata';
+  static const cloud = 'Komputasi Awan & DevOps';
+  static const sainsData = 'Sains Data';
 }
 
 const List<Course> courses = [
@@ -109,5 +115,47 @@ const List<Course> courses = [
     level: 'Semester 5-6',
     icon: Icons.phone_android,
     color: Color(0xFF283593),
+  ),
+  Course(
+    name: CourseName.web,
+    description: 'HTML, CSS, JavaScript, HTTP, dan arsitektur web.',
+    level: 'Semester 3-4',
+    icon: Icons.language,
+    color: Color(0xFF00695C),
+  ),
+  Course(
+    name: CourseName.daa,
+    description: 'Greedy, divide and conquer, dynamic programming, dan graf.',
+    level: 'Semester 3-4',
+    icon: Icons.speed,
+    color: Color(0xFF512DA8),
+  ),
+  Course(
+    name: CourseName.imk,
+    description: 'Usability, prinsip desain antarmuka, dan aksesibilitas.',
+    level: 'Semester 5-6',
+    icon: Icons.touch_app,
+    color: Color(0xFF827717),
+  ),
+  Course(
+    name: CourseName.otomata,
+    description: 'Automata, ekspresi reguler, tata bahasa, dan kompilator.',
+    level: 'Semester 5-6',
+    icon: Icons.device_hub,
+    color: Color(0xFF0097A7),
+  ),
+  Course(
+    name: CourseName.cloud,
+    description: 'Model layanan cloud, Docker, Kubernetes, dan CI/CD.',
+    level: 'Semester 7-8',
+    icon: Icons.cloud,
+    color: Color(0xFF1976D2),
+  ),
+  Course(
+    name: CourseName.sainsData,
+    description: 'Statistik dasar, pembersihan data, dan model prediksi.',
+    level: 'Semester 7-8',
+    icon: Icons.analytics,
+    color: Color(0xFFBF360C),
   ),
 ];

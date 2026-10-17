@@ -18,6 +18,7 @@ import '../widgets/theme_toggle_button.dart';
 import 'profile_screen.dart';
 import 'quiz_screen.dart';
 import 'stats_screen.dart';
+import '../widgets/streak_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,7 +28,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const List<String> _levels = ['Semua', 'Semester 1-2', 'Semester 3-4', 'Semester 5-6'];
+  static const List<String> _levels = ['Semua', 'Semester 1-2', 'Semester 3-4', 'Semester 5-6', 'Semester 7-8'];
 
   final _search = TextEditingController();
   String _query = '';
@@ -123,6 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
               quizCount: history.length,
               averagePercent: average,
             ),
+            SizedBox(height: r.wp(3)),
+            const StreakCard(),
 
             if (quiz.hasProgress) ...[
               SizedBox(height: r.wp(4)),

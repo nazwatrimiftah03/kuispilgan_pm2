@@ -37,6 +37,22 @@ class _LoginScreenState extends State<LoginScreen> {
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     }
+    // Jika sukses, AuthGate otomatis menampilkan HomeScreen.
+  }
+
+  Future<void> _openRegister() async {
+    final registered = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+    );
+    if (registered == null || !mounted) return;
+
+    // Akun baru dibuat: isi username, kosongkan password, minta pengguna masuk.
+    _username.text = registered;
+    _password.clear();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Akun berhasil dibuat. Silakan masuk.')),
+    );
   }
 
   @override
@@ -90,12 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   : PrimaryButton(label: 'Masuk', icon: Icons.login, onPressed: _submit),
               SizedBox(height: r.wp(3)),
               PrimaryButton(
-                label: 'Daftar',
+                label: 'Belum punya akun? Daftar',
                 outlined: true,
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                ),
+                onPressed: _openRegister,
               ),
             ],
           ),

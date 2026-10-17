@@ -4,11 +4,13 @@ import 'courses.dart';
 import 'questions_dasar.dart';
 import 'questions_lanjut.dart';
 import 'questions_menengah.dart';
+import 'questions_tambahan.dart';
 
 final List<Question> allQuestions = [
   ...questionsDasar,
   ...questionsMenengah,
   ...questionsLanjut,
+  ...questionsTambahan,
 ];
 
 final List<String> categoryNames = courses.map((c) => c.name).toList();

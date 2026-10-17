@@ -72,6 +72,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Membuat akun baru. TIDAK otomatis masuk: pengguna diarahkan kembali
+  /// ke halaman login. Mengembalikan pesan error, atau null jika berhasil.
   Future<String?> register(String fullName, String username, String password) async {
     final key = username.trim().toLowerCase();
     if (_users.containsKey(key)) return 'Username sudah dipakai';
@@ -83,11 +85,6 @@ class AuthProvider extends ChangeNotifier {
       'joined': DateTime.now().toIso8601String(),
     };
     await _saveUsers();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_sessionKey, key);
-
-    _current = _toUser(key);
-    notifyListeners();
     return null;
   }
 

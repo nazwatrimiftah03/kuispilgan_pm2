@@ -10,6 +10,7 @@ import '../widgets/primary_button.dart';
 import '../widgets/score_ring.dart';
 import '../widgets/star_rating.dart';
 import 'quiz_screen.dart';
+import '../widgets/new_badges_banner.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -92,6 +93,7 @@ class _ResultScreenState extends State<ResultScreen> {
                   label: Text(xpText, style: TextStyle(fontSize: r.sp(3.2))),
                 ),
               ),
+              const NewBadgesBanner(),
               SizedBox(height: r.wp(5)),
 
               Text('Pembahasan', style: TextStyle(fontSize: r.sp(4.5), fontWeight: FontWeight.w600)),

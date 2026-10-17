@@ -9,6 +9,8 @@ import '../widgets/content_wrapper.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/profile_dialogs.dart';
 import '../widgets/user_avatar.dart';
+import '../widgets/badge_preview_card.dart';
+import 'achievements_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -104,6 +106,13 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+            ),
+            SizedBox(height: r.wp(3)),
+            BadgePreviewCard(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AchievementsScreen()),
               ),
             ),
             SizedBox(height: r.wp(3)),
