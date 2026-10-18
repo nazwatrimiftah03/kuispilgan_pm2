@@ -173,7 +173,6 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: r.wp(3)),
 
-            // Pengaturan akun
             Card(
               child: Column(
                 children: [

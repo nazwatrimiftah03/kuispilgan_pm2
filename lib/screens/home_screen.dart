@@ -133,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Text('Mata Kuliah', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),
             SizedBox(height: r.wp(3)),
 
-            // Pencarian
             TextField(
               controller: _search,
               onChanged: (v) => setState(() => _query = v),
@@ -155,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: r.wp(3)),
 
-            // Filter semester
             Wrap(
               spacing: r.wp(2),
               runSpacing: r.wp(1),
@@ -170,7 +168,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: r.wp(4)),
 
-            // Grid mata kuliah (Wrap agar tinggi mengikuti isi, tanpa overflow)
             if (filtered.isEmpty)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: r.wp(8)),
@@ -209,7 +206,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
 
-            // Riwayat 5 terakhir
             if (history.isNotEmpty) ...[
               SizedBox(height: r.wp(6)),
               Text('Riwayat Terbaru', style: TextStyle(fontSize: r.sp(4.6), fontWeight: FontWeight.w600)),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 
-/// Kartu umpan balik yang muncul setelah menjawab pada mode latihan.
 class FeedbackCard extends StatelessWidget {
   final bool correct;
   final String explanation;

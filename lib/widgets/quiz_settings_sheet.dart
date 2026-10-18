@@ -3,7 +3,6 @@ import '../models/quiz_settings.dart';
 import '../utils/responsive.dart';
 import 'primary_button.dart';
 
-/// Menampilkan bottom sheet pengaturan. Mengembalikan null jika ditutup.
 Future<QuizSettings?> showQuizSettingsSheet(
     BuildContext context, {
       required String title,

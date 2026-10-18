@@ -6,7 +6,6 @@ import '../theme/app_theme.dart';
 import '../utils/achievements.dart';
 import '../utils/responsive.dart';
 
-/// Muncul di halaman hasil jika kuis yang baru selesai membuka lencana baru.
 class NewBadgesBanner extends StatelessWidget {
   const NewBadgesBanner({super.key});
 

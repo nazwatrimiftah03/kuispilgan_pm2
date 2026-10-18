@@ -5,7 +5,6 @@ import '../providers/quiz_provider.dart';
 import '../utils/achievements.dart';
 import '../utils/responsive.dart';
 
-/// Pratinjau lencana di Profil; tap untuk membuka daftar lengkap.
 class BadgePreviewCard extends StatelessWidget {
   final VoidCallback onTap;
   const BadgePreviewCard({super.key, required this.onTap});

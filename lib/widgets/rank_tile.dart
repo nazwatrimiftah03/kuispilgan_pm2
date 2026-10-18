@@ -3,7 +3,6 @@ import '../utils/leaderboard.dart';
 import '../utils/responsive.dart';
 import 'user_avatar.dart';
 
-/// Baris peringkat untuk posisi ke-4 dan seterusnya.
 class RankTile extends StatelessWidget {
   final LeaderboardEntry entry;
   final int rank;

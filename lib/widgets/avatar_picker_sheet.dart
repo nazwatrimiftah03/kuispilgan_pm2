@@ -3,7 +3,6 @@ import '../data/avatars.dart';
 import '../utils/responsive.dart';
 import 'user_avatar.dart';
 
-/// Bottom sheet pemilih avatar. Mengembalikan indeks yang dipilih, atau null.
 Future<int?> showAvatarPicker(BuildContext context, {required int current}) {
   return showModalBottomSheet<int>(
     context: context,

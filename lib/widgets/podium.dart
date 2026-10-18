@@ -4,7 +4,6 @@ import '../utils/leaderboard.dart';
 import '../utils/responsive.dart';
 import 'user_avatar.dart';
 
-/// Podium juara 1-3. [entries] harus sudah terurut dari peringkat tertinggi.
 class Podium extends StatelessWidget {
   final List<LeaderboardEntry> entries;
   final String myUsername;
@@ -13,7 +12,6 @@ class Podium extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Urutan tampilan: juara 2, juara 1, juara 3.
     const order = [1, 0, 2];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 
-/// Bintang 0-3 untuk penilaian hasil kuis.
 class StarRating extends StatelessWidget {
   final int stars;
   const StarRating({super.key, required this.stars});

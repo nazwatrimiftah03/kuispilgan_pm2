@@ -5,7 +5,6 @@ import '../providers/quiz_provider.dart';
 import '../utils/achievements.dart';
 import '../utils/responsive.dart';
 
-/// Kartu streak harian di Home: hari beruntun + kalender 7 hari terakhir.
 class StreakCard extends StatelessWidget {
   const StreakCard({super.key});
 

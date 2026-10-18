@@ -35,11 +35,10 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   void dispose() {
     _quiz.removeListener(_onQuizChanged);
-    _quiz.pauseTimer(); // jeda timer jika pengguna keluar dari layar kuis
+    _quiz.pauseTimer();
     super.dispose();
   }
 
-  /// Waktu soal terakhir habis -> selesaikan kuis otomatis.
   void _onQuizChanged() {
     if (_navigating || !_quiz.expired) return;
     _navigating = true;

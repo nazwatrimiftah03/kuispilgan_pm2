@@ -12,8 +12,6 @@ class _TabItem {
   const _TabItem(this.label, this.icon, this.selectedIcon);
 }
 
-/// Kerangka utama setelah login: 4 tab dengan navigasi adaptif.
-/// Layar sempit memakai NavigationBar (bawah), layar lebar memakai NavigationRail (kiri).
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -22,7 +20,6 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  /// HP landscape lebarnya >= 600 tetapi tingginya pendek, jadi tetap pakai bar bawah.
   static const double _railMinHeight = 480;
 
   static const List<_TabItem> _tabs = [
@@ -48,13 +45,12 @@ class _MainShellState extends State<MainShell> {
     final r = Responsive(context);
     final useRail = r.isTablet && r.screenHeight >= _railMinHeight;
 
-    // IndexedStack menjaga state tiap tab (scroll, filter) saat berpindah tab.
     final body = IndexedStack(index: _index, children: _pages);
 
     return PopScope(
       canPop: _index == 0,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => _index = 0); // Back: kembali ke Beranda dulu
+        if (!didPop) setState(() => _index = 0); // Back
       },
       child: Scaffold(
         body: useRail

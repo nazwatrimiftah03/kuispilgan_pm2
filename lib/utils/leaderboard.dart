@@ -19,8 +19,6 @@ class LeaderboardEntry {
 class Leaderboard {
   Leaderboard._();
 
-  /// Menyusun peringkat dari semua akun. [since] membatasi riwayat sejak
-  /// tanggal tertentu (null = semua waktu). Urutan: XP, jumlah kuis, nama.
   static List<LeaderboardEntry> build(
       List<AppUser> users,
       List<ScoreEntry> history, {

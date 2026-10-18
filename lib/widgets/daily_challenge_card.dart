@@ -7,7 +7,6 @@ import '../screens/quiz_screen.dart';
 import '../utils/gamification.dart';
 import '../utils/responsive.dart';
 
-/// Kartu Tantangan Harian di Beranda.
 class DailyChallengeCard extends StatelessWidget {
   const DailyChallengeCard({super.key});
 

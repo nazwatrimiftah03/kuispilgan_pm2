@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/responsive.dart';
 
-/// Lingkaran hitung mundur; berubah merah saat waktu tinggal 5 detik.
 class TimerBadge extends StatelessWidget {
   final int secondsLeft;
   final int totalSeconds;

@@ -28,7 +28,6 @@ class Responsive {
 
   double sp(double percent) {
     final val = width * percent / 100;
-    // Berikan fallback minimal ukuran teks agar tidak pernah 0 atau negatif
     return val > 0 ? val : 12.0;
   }
 }

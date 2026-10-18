@@ -4,7 +4,6 @@ import '../models/question.dart';
 import 'gamification.dart';
 import '../data/daily_challenge.dart';
 
-/// Ringkasan aktivitas pengguna, dihitung dari riwayat skor.
 class UserStats {
   final int quizCount;
   final int perfectCount;
@@ -53,7 +52,6 @@ class UserStats {
     );
   }
 
-  /// Streak berjalan: tetap hidup jika kemarin masih ada kuis (hari ini belum).
   static int _current(Set<DateTime> days, DateTime now) {
     var cursor = DateTime(now.year, now.month, now.day);
     if (!days.contains(cursor)) {
@@ -104,7 +102,6 @@ class Achievement {
 
   bool unlocked(UserStats s) => value(s) >= target;
 
-  /// Nilai saat ini, dibatasi sampai target (untuk tampilan "3/10").
   int current(UserStats s) => value(s) > target ? target : value(s);
 
   double progress(UserStats s) =>

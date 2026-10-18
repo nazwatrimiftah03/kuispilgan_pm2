@@ -6,7 +6,6 @@ class AvatarStyle {
   const AvatarStyle(this.icon, this.color);
 }
 
-/// Pilihan avatar bawaan (tanpa file gambar, jadi ringan dan konsisten).
 const List<AvatarStyle> avatarStyles = [
   AvatarStyle(Icons.face, Color(0xFF1565C0)),
   AvatarStyle(Icons.rocket_launch, Color(0xFFEF6C00)),

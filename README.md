@@ -1,6 +1,6 @@
 # Kuis Ilkom
 
-Aplikasi kuis pilihan ganda seputar ilmu komputer yang dibuat dengan Flutter. Proyek ini dikerjakan untuk UTS Pemrograman Mobile (PM 2), Semester Ganjil T.A. 2026/2027, Unit Ilmu Komputer Laboratory Center (IKLC), Program Studi Ilmu Komputer, Fasilkom-TI Universitas Sumatera Utara.
+Aplikasi kuis pilihan ganda 
 
 ## Identitas Mahasiswa
 

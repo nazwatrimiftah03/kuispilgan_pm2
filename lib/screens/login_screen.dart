@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
     }
-    // Jika sukses, AuthGate otomatis menampilkan HomeScreen.
   }
 
   Future<void> _openRegister() async {
@@ -47,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
     if (registered == null || !mounted) return;
 
-    // Akun baru dibuat: isi username, kosongkan password, minta pengguna masuk.
     _username.text = registered;
     _password.clear();
     ScaffoldMessenger.of(context).showSnackBar(

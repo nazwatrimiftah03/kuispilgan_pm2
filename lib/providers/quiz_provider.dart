@@ -7,9 +7,6 @@ import '../data/questions.dart';
 import '../models/question.dart';
 import '../models/quiz_settings.dart';
 
-/// State management (Provider). Dipasang di root aplikasi sehingga progres
-/// jawaban dan timer tidak hilang saat layar dirotasi atau pindah halaman.
-/// Riwayat skor dan tema disimpan lokal dengan shared_preferences.
 class QuizProvider extends ChangeNotifier {
   static const _historyKey = 'history';
   static const _themeKey = 'theme_dark';
@@ -38,7 +35,6 @@ class QuizProvider extends ChangeNotifier {
   bool get hasProgress => _questions.isNotEmpty && !_finished;
   int? get selected => _answers[_current];
 
-  /// true jika sesi ini adalah "ulangi soal yang salah" (tidak dicatat ke riwayat).
   bool get isRetry => _isRetry;
 
   QuizSettings get settings => _settings;
@@ -46,12 +42,10 @@ class QuizProvider extends ChangeNotifier {
   int get secondsLeft => _secondsLeft;
   bool get expired => _expired;
 
-  /// Pada mode timer, tombol kembali dinonaktifkan agar adil.
   bool get canGoBack => _current > 0 && !timerEnabled;
 
   bool get isPractice => _settings.mode == QuizMode.latihan;
 
-  /// Pada mode latihan, jawaban dikunci setelah dipilih agar koreksi tidak bisa dicurangi.
   bool get isLocked => isPractice && _answers.isNotEmpty && _answers[_current] != null;
 
   int get score {
@@ -71,9 +65,6 @@ class QuizProvider extends ChangeNotifier {
     return list.map((h) => h.percent).reduce((a, b) => a > b ? a : b);
   }
 
-  // ---------- Penyimpanan lokal ----------
-
-  /// Dipanggil sekali di main() untuk memuat riwayat dan tema tersimpan.
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     themeMode = (prefs.getBool(_themeKey) ?? false) ? ThemeMode.dark : ThemeMode.light;
@@ -100,9 +91,6 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ---------- Alur kuis ----------
-
-  /// Memulai kuis biasa untuk satu mata kuliah (null = semua) sesuai pengaturan.
   void start(String? category, {QuizSettings settings = const QuizSettings()}) {
     pauseTimer();
     _settings = settings;
@@ -118,7 +106,6 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Memulai Tantangan Harian: soal sudah ditentukan, mode latihan + timer.
   void startDaily(List<Question> dailyQuestions) {
     pauseTimer();
     _settings = const QuizSettings(
@@ -138,7 +125,6 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Memulai sesi baru yang hanya berisi soal yang dijawab salah atau terlewat.
   void retryWrong() {
     final wrong = <Question>[];
     for (int i = 0; i < total; i++) {
@@ -192,21 +178,19 @@ class QuizProvider extends ChangeNotifier {
   }
 
   void _tick() {
-    if (isLocked) return; // timer berhenti saat pembahasan ditampilkan
+    if (isLocked) return;
     if (_secondsLeft > 0) _secondsLeft--;
     if (_secondsLeft == 0) {
       if (isLast) {
         pauseTimer();
         _expired = true;
       } else {
-        _current++; // soal dilewati (dianggap salah)
+        _current++;
         _secondsLeft = _settings.secondsPerQuestion;
       }
     }
     notifyListeners();
   }
-
-  // ---------- Selesai & reset ----------
 
   void finish(String username) {
     pauseTimer();

@@ -9,9 +9,9 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final auth = AuthProvider();
-  await auth.load(); // muat akun & sesi login yang tersimpan
+  await auth.load();
   final quiz = QuizProvider();
-  await quiz.load(); // muat riwayat skor & tema yang tersimpan
+  await quiz.load();
 
   runApp(
     MultiProvider(
@@ -40,7 +40,6 @@ class QuizApp extends StatelessWidget {
   }
 }
 
-/// Menampilkan Login jika belum masuk, kerangka utama (4 tab) jika sudah.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 

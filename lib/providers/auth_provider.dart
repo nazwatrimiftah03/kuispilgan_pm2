@@ -16,8 +16,6 @@ class AppUser {
   });
 }
 
-/// Autentikasi dummy & lokal (SharedPreferences, bukan database).
-/// Catatan: password disimpan polos hanya untuk latihan.
 class AuthProvider extends ChangeNotifier {
   static const _usersKey = 'users';
   static const _sessionKey = 'session';
@@ -28,7 +26,6 @@ class AuthProvider extends ChangeNotifier {
   AppUser? get user => _current;
   bool get isLoggedIn => _current != null;
 
-  /// Semua akun di perangkat ini (dipakai papan peringkat).
   List<AppUser> get allUsers => _users.keys.map(_toUser).toList();
 
   AppUser _toUser(String username) {
@@ -56,7 +53,6 @@ class AuthProvider extends ChangeNotifier {
       );
     }
 
-    // Akun lama belum punya tanggal bergabung: isi sekali lalu simpan.
     var dirty = false;
     for (final d in _users.values) {
       if (d['joined'] == null) {
@@ -72,8 +68,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Membuat akun baru. TIDAK otomatis masuk: pengguna diarahkan kembali
-  /// ke halaman login. Mengembalikan pesan error, atau null jika berhasil.
   Future<String?> register(String fullName, String username, String password) async {
     final key = username.trim().toLowerCase();
     if (_users.containsKey(key)) return 'Username sudah dipakai';
@@ -129,7 +123,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Mengembalikan pesan error, atau null jika berhasil.
   Future<String?> changePassword(String oldPass, String newPass) async {
     final u = _current;
     if (u == null) return 'Kamu belum masuk';

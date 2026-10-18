@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/responsive.dart';
 
-/// Lingkaran skor yang terisi dengan animasi.
 class ScoreRing extends StatelessWidget {
   final double percent;
   final String label;
