@@ -14,11 +14,10 @@ import '../widgets/course_card.dart';
 import '../widgets/level_card.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/quiz_settings_sheet.dart';
-import '../widgets/theme_toggle_button.dart';
-import 'profile_screen.dart';
-import 'quiz_screen.dart';
-import 'stats_screen.dart';
 import '../widgets/streak_card.dart';
+import '../widgets/theme_toggle_button.dart';
+import 'quiz_screen.dart';
+import '../widgets/daily_challenge_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,7 +27,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const List<String> _levels = ['Semua', 'Semester 1-2', 'Semester 3-4', 'Semester 5-6', 'Semester 7-8'];
+  static const List<String> _levels = [
+    'Semua',
+    'Semester 1-2',
+    'Semester 3-4',
+    'Semester 5-6',
+    'Semester 7-8',
+  ];
 
   final _search = TextEditingController();
   String _query = '';
@@ -85,33 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kuis Ilkom'),
-        actions: [
-          IconButton(
-            tooltip: 'Profil',
-            icon: const Icon(Icons.account_circle),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Statistik',
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const StatsScreen()),
-            ),
-          ),
-          const ThemeToggleButton(),
-          IconButton(
-            tooltip: 'Keluar',
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              context.read<QuizProvider>().reset();
-              context.read<AuthProvider>().logout();
-            },
-          ),
-        ],
+        actions: const [ThemeToggleButton()],
       ),
       body: ContentWrapper(
         child: Column(
@@ -126,6 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: r.wp(3)),
             const StreakCard(),
+
+            SizedBox(height: r.wp(3)),
+            const DailyChallengeCard(),
 
             if (quiz.hasProgress) ...[
               SizedBox(height: r.wp(4)),

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/quiz_provider.dart';
-import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/main_shell.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final auth = AuthProvider();
-  await auth.load();
+  await auth.load(); // muat akun & sesi login yang tersimpan
   final quiz = QuizProvider();
-  await quiz.load();
+  await quiz.load(); // muat riwayat skor & tema yang tersimpan
 
   runApp(
     MultiProvider(
@@ -40,12 +40,13 @@ class QuizApp extends StatelessWidget {
   }
 }
 
+/// Menampilkan Login jika belum masuk, kerangka utama (4 tab) jika sudah.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context) {
     final loggedIn = context.watch<AuthProvider>().isLoggedIn;
-    return loggedIn ? const HomeScreen() : const LoginScreen();
+    return loggedIn ? const MainShell() : const LoginScreen();
   }
 }

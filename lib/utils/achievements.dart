@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/courses.dart';
 import '../models/question.dart';
 import 'gamification.dart';
+import '../data/daily_challenge.dart';
 
 /// Ringkasan aktivitas pengguna, dihitung dari riwayat skor.
 class UserStats {
@@ -13,6 +14,7 @@ class UserStats {
   final int bestStreak;
   final int maxQuizzesInDay;
   final Set<DateTime> activeDays;
+  final int dailyCount;
 
   const UserStats({
     required this.quizCount,
@@ -23,6 +25,7 @@ class UserStats {
     required this.bestStreak,
     required this.maxQuizzesInDay,
     required this.activeDays,
+    required this.dailyCount,
   });
 
   factory UserStats.from(List<ScoreEntry> history, {DateTime? now}) {
@@ -46,6 +49,7 @@ class UserStats {
       maxQuizzesInDay:
       perDay.values.isEmpty ? 0 : perDay.values.reduce((a, b) => a > b ? a : b),
       activeDays: days,
+      dailyCount: history.where((h) => h.category == DailyChallenge.category).length,
     );
   }
 
@@ -203,5 +207,13 @@ final List<Achievement> achievements = [
     color: const Color(0xFFBF8F00),
     target: 500,
     value: (s) => s.totalXp,
+  ),
+  Achievement(
+    title: 'Pejuang Harian',
+    description: 'Selesaikan 3 Tantangan Harian',
+    icon: Icons.event_available,
+    color: const Color(0xFF6A1B9A),
+    target: 3,
+    value: (s) => s.dailyCount,
   ),
 ];

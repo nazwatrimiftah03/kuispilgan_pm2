@@ -11,6 +11,7 @@ import '../widgets/score_ring.dart';
 import '../widgets/star_rating.dart';
 import 'quiz_screen.dart';
 import '../widgets/new_badges_banner.dart';
+import '../data/daily_challenge.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -48,9 +49,10 @@ class _ResultScreenState extends State<ResultScreen> {
     ];
     final shown = _onlyWrong ? wrong : List<int>.generate(quiz.total, (i) => i);
 
+    final isDaily = quiz.category == DailyChallenge.category;
     final xpText = quiz.isRetry || quiz.history.isEmpty
         ? 'Mode ulangi tidak menambah XP'
-        : '+${Gamification.xpOf(quiz.history.first)} XP';
+        : '+${Gamification.xpOf(quiz.history.first)} XP${isDaily ? ' (bonus ${DailyChallenge.xpMultiplier}x)' : ''}';
 
     return PopScope(
       canPop: false,

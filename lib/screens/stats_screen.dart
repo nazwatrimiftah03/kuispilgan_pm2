@@ -36,7 +36,8 @@ class StatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = Responsive(context);
-    final user = context.watch<AuthProvider>().user!;
+    final user = context.watch<AuthProvider>().user;
+    if (user == null) return const SizedBox.shrink();
     final quiz = context.watch<QuizProvider>();
     final cs = Theme.of(context).colorScheme;
 

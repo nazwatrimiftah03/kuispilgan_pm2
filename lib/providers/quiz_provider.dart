@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../data/daily_challenge.dart';
 import '../data/questions.dart';
 import '../models/question.dart';
 import '../models/quiz_settings.dart';
@@ -101,6 +102,7 @@ class QuizProvider extends ChangeNotifier {
 
   // ---------- Alur kuis ----------
 
+  /// Memulai kuis biasa untuk satu mata kuliah (null = semua) sesuai pengaturan.
   void start(String? category, {QuizSettings settings = const QuizSettings()}) {
     pauseTimer();
     _settings = settings;
@@ -112,6 +114,26 @@ class QuizProvider extends ChangeNotifier {
     _isRetry = false;
     _expired = false;
     _secondsLeft = settings.secondsPerQuestion;
+    resumeTimer();
+    notifyListeners();
+  }
+
+  /// Memulai Tantangan Harian: soal sudah ditentukan, mode latihan + timer.
+  void startDaily(List<Question> dailyQuestions) {
+    pauseTimer();
+    _settings = const QuizSettings(
+      mode: QuizMode.latihan,
+      timerEnabled: true,
+      secondsPerQuestion: DailyChallenge.secondsPerQuestion,
+    );
+    _category = DailyChallenge.category;
+    _questions = List<Question>.of(dailyQuestions);
+    _answers = List<int?>.filled(_questions.length, null);
+    _current = 0;
+    _finished = false;
+    _isRetry = false;
+    _expired = false;
+    _secondsLeft = DailyChallenge.secondsPerQuestion;
     resumeTimer();
     notifyListeners();
   }

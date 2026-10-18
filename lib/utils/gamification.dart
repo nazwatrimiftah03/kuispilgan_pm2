@@ -1,4 +1,5 @@
 import '../models/question.dart';
+import '../data/daily_challenge.dart';
 
 class PlayerLevel {
   static const int xpPerLevel = 100;
@@ -22,9 +23,10 @@ class PlayerLevel {
 class Gamification {
   Gamification._();
 
-  /// 10 XP per jawaban benar, bonus 20 XP jika semua benar.
-  static int xpOf(ScoreEntry e) =>
-      e.score * 10 + ((e.total > 0 && e.score == e.total) ? 20 : 0);
+  static int xpOf(ScoreEntry e) {
+    final base = e.score * 10 + ((e.total > 0 && e.score == e.total) ? 20 : 0);
+    return e.category == DailyChallenge.category ? base * DailyChallenge.xpMultiplier : base;
+  }
 
   static int totalXp(List<ScoreEntry> entries) =>
       entries.fold(0, (sum, e) => sum + xpOf(e));
