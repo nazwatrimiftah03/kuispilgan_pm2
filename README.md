@@ -107,6 +107,7 @@ assets/
 - [provider](https://pub.dev/packages/provider) untuk state management
 - [shared_preferences](https://pub.dev/packages/shared_preferences) untuk penyimpanan lokal
 - Font Poppins
+- FIgma Desain : https://www.figma.com/design/xTANzdo1Jz98jC2Z6T3Xgr/Kuis-Ilkom-Mobile?node-id=0-1&t=MucS2ejugn3gAYdG-1
 
 ## Cara Menjalankan
 
